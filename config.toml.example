@@ -1,0 +1,33 @@
+# config.toml.example
+[[sec]]
+  # [name]
+  # Give each section a unique name.
+  # It is possible to switch the section used by the option command.
+  name = "example"
+
+  [[sec.args]]
+    # [server]
+    # If blank, query DNS server specified in resolv.conf.
+    server = ""
+    qtypes = ["a"]
+
+  [[sec.args]]
+    # [server]
+    # If specified, query that DNS server.
+    server = "1.1.1.1"
+    qtypes = ["a"]
+
+  [[sec.args]]
+    # [server]
+    # If you write "ns", get DNS server from NS record and query it.
+    server = "ns"
+    # [qtypes]
+    # Multiple query types available.
+    qtypes = ["a", "ns", "cname", "soa", "ptr", "mx", "txt", "aaaa", "any"]
+
+[[sec]]
+  name = "example2"
+
+  [[sec.args]]
+    server = ""
+    qtypes = ["a"]

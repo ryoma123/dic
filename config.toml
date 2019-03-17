@@ -1,0 +1,28 @@
+[[sec]]
+  name = "resolv"
+
+  [[sec.args]]
+    server = ""
+    qtypes = ["any"]
+
+[[sec]]
+  name = "public"
+
+  [[sec.args]]
+    server = ""
+    qtypes = ["a", "mx", "txt"]
+
+  [[sec.args]]
+    server = "1.1.1.1"
+    qtypes = ["a", "mx", "txt"]
+
+[[sec]]
+  name = "authoritative"
+
+  [[sec.args]]
+    server = ""
+    qtypes = ["a", "mx", "txt"]
+
+  [[sec.args]]
+    server = "ns"
+    qtypes = ["a", "mx", "txt"]
