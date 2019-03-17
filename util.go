@@ -50,3 +50,7 @@ func removeNewline(s string) string {
 		"\n", "",
 	).Replace(s)
 }
+
+func getAppPath(s string) string {
+	return os.ExpandEnv(stringsJoin([]string{appPath, s}))
+}

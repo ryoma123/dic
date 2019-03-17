@@ -10,9 +10,10 @@ import (
 )
 
 const (
+	appPath     = "${GOPATH}/src/github.com/ryoma123/dic/"
 	sectionFile = ".section"
 	configFile  = "config.toml"
-    resolvFile  = "/etc/resolv.conf"
+	resolvFile  = "/etc/resolv.conf"
 )
 
 var confSec []args
@@ -37,7 +38,7 @@ type args struct {
 func newConfig() config {
 	var c config
 
-	_, err := toml.DecodeFile(configFile, &c)
+	_, err := toml.DecodeFile(getAppPath(configFile), &c)
 	if err != nil {
 		err := fmt.Errorf(err.Error())
 		setError(err)
@@ -96,7 +97,7 @@ func (c config) getSections() []string {
 func getDefaultSection() string {
 	var s string
 
-	f, err := os.Open(sectionFile)
+	f, err := os.Open(getAppPath(sectionFile))
 	if err != nil {
 		err := fmt.Errorf("Default section is not set. For details see help")
 		setError(err)

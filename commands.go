@@ -83,7 +83,7 @@ func doEdit(c *cli.Context) error {
 		os.Exit(exitErr)
 	}
 
-	open.Run(configFile)
+	open.Run(getAppPath(configFile))
 	return nil
 }
 
@@ -133,7 +133,7 @@ func doSet(c *cli.Context) error {
 
 	s := removeNewline(c.Args().First())
 
-	f, err := os.OpenFile(sectionFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+	f, err := os.OpenFile(getAppPath(sectionFile), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
 	if err != nil {
 		err := fmt.Errorf(err.Error())
 		setError(err)

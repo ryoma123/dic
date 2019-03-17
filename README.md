@@ -7,7 +7,7 @@ CLI tool for collecting domain information from multiple DNS servers.
 To install, use `go get`:
 
 ```sh
-$ go get github.com/ryoma123/dic
+$ go get github.com/ryoma123/dic/...
 ```
 
 ## Usage
