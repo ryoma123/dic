@@ -1,5 +1,7 @@
 # dic
 
+[![Build Status](https://travis-ci.org/ryoma123/dic.svg?branch=master)](https://travis-ci.org/ryoma123/dic)
+
 CLI tool for collecting domain information from multiple DNS servers.
 
 ## Installation
