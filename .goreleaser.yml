@@ -1,25 +1,45 @@
+version: 2
+
 builds:
   - main: ./cmd/dic
     env:
-      - GO111MODULE=on
+      - CGO_ENABLED=0
     goos:
       - windows
       - darwin
       - linux
     goarch:
       - amd64
-      - 386
-archive:
-  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
-  files:
-    - none*
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+brews:
+  - repository:
+      owner: ryoma123
+      name: homebrew-tap
+    homepage: https://github.com/ryoma123/dic
+    description: CLI tool for collecting domain information from multiple DNS servers
+    license: MIT
+    install: |
+      bin.install "dic"
+    test: |
+      system "#{bin}/dic", "--version"
+
 checksum:
   name_template: 'checksums.txt'
+
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  version_template: "{{ .Tag }}-next"
+
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - '^docs:'
+      - '^test:'
