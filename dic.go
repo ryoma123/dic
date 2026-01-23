@@ -12,10 +12,11 @@ type Dic struct {
 	domains   []string
 	servers   []string
 	nsRecords map[string]string
+	opts      Options
 }
 
 // New returns Dic
-func New(d []string) *Dic {
+func New(d []string, opts Options) *Dic {
 	var s []string
 	var ns map[string]string
 
@@ -32,6 +33,7 @@ func New(d []string) *Dic {
 		domains:   d,
 		servers:   s,
 		nsRecords: ns,
+		opts:      opts,
 	}
 }
 
@@ -39,6 +41,9 @@ func setNSRecords(domains []string) map[string]string {
 	m := map[string]string{}
 
 	for _, d := range domains {
+		if isIPAddress(d) {
+			continue
+		}
 		wg.Add(1)
 
 		go func(d string) {

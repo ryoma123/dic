@@ -24,3 +24,29 @@ func TestToUint16(t *testing.T) {
 		}
 	}
 }
+
+func TestIsIPAddress(t *testing.T) {
+	if !isIPAddress("1.2.3.4") {
+		t.Errorf("Expected IPv4 to be detected")
+	}
+	if !isIPAddress("2001:db8::1") {
+		t.Errorf("Expected IPv6 to be detected")
+	}
+	if isIPAddress("example.com") {
+		t.Errorf("Did not expect hostname to be detected as IP")
+	}
+}
+
+func TestReverseAddr(t *testing.T) {
+	r, ok := reverseAddr("1.2.3.4")
+	if !ok {
+		t.Fatalf("Expected reverseAddr to succeed")
+	}
+	if e := "4.3.2.1.in-addr.arpa."; r != e {
+		t.Errorf("Expected %q, got %q", e, r)
+	}
+
+	if _, ok := reverseAddr("not-an-ip"); ok {
+		t.Errorf("Expected reverseAddr to fail for invalid IP")
+	}
+}

@@ -28,7 +28,7 @@ var resolv *dns.ClientConfig
 func setResolv() {
 	c, err := dns.ClientConfigFromFile(resolvFile)
 	if err != nil {
-		err := fmt.Errorf(err.Error())
+		err := fmt.Errorf("%s", err)
 		setError(err)
 	}
 	resolv = c
@@ -46,7 +46,7 @@ func query(d string, q uint16, s string) *dns.Msg {
 
 	r, _, err := c.Exchange(m, net.JoinHostPort(s, resolv.Port))
 	if r == nil {
-		err := fmt.Errorf(err.Error())
+		err := fmt.Errorf("%s", err)
 		setError(err)
 	}
 	return r
@@ -55,4 +55,16 @@ func query(d string, q uint16, s string) *dns.Msg {
 // toUint16 to uint16 for string
 func toUint16(q string) uint16 {
 	return qtypes[strings.ToLower(q)]
+}
+
+func isIPAddress(s string) bool {
+	return net.ParseIP(s) != nil
+}
+
+func reverseAddr(ip string) (string, bool) {
+	r, err := dns.ReverseAddr(ip)
+	if err != nil {
+		return "", false
+	}
+	return r, true
 }

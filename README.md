@@ -60,6 +60,20 @@ $ dic example.com www.example.com
     www.example.com.	86400	IN	TXT	"v=spf1 -all"
 ```
 
+Run via `go run` (recommended without `--` so flags are parsed normally):
+
+```sh
+$ go run ./cmd/dic -r 8.8.8.8
+$ go run ./cmd/dic -f -r www.example.com
+```
+
+Use a specific config file:
+
+```sh
+$ go run ./cmd/dic -c ./config.toml -r 8.8.8.8
+$ dic -c /path/to/config.toml -f -r www.example.com
+```
+
 ## Example
 
 [Description example](https://github.com/ryoma123/dic/blob/master/config.toml.example) of config:
@@ -135,6 +149,22 @@ Set a section to use by default.
 ### --name `<section name>`, -n `<section name>`
 
 Pass a section for temporary use.
+
+### --reverse, -r
+
+Reverse lookup for IP arguments (PTR); domain args remain normal.
+
+### --follow-cname, -f
+
+Follow CNAMEs and query A/AAAA for the target name.
+
+### --cname-max `<n>`, -m `<n>`
+
+Maximum CNAME follow depth (default 5).
+
+### --config `<path>`, -c `<path>`
+
+Path to config file (default: `./config.toml` or GOPATH path).
 
 ### --version, -v
 
