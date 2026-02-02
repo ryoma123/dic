@@ -52,5 +52,20 @@ func removeNewline(s string) string {
 }
 
 func getAppPath(s string) string {
+	switch s {
+	case configFile:
+		if len(configPath) != 0 {
+			return configPath
+		}
+	case sectionFile:
+		if len(sectionPath) != 0 {
+			return sectionPath
+		}
+	}
+
+	if exists(s) {
+		return s
+	}
+
 	return os.ExpandEnv(stringsJoin([]string{appPath, s}))
 }

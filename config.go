@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -17,6 +18,8 @@ const (
 )
 
 var confSec []args
+var configPath string
+var sectionPath string
 
 // config struct
 type config struct {
@@ -40,7 +43,7 @@ func newConfig() config {
 
 	_, err := toml.DecodeFile(getAppPath(configFile), &c)
 	if err != nil {
-		err := fmt.Errorf(err.Error())
+		err := fmt.Errorf("%s", err)
 		setError(err)
 	}
 	return c
@@ -99,7 +102,7 @@ func getDefaultSection() string {
 
 	f, err := os.Open(getAppPath(sectionFile))
 	if err != nil {
-		err := fmt.Errorf("Default section is not set. For details see help")
+		err := fmt.Errorf("%s", "Default section is not set. For details see help")
 		setError(err)
 	}
 	defer f.Close()
@@ -110,9 +113,19 @@ func getDefaultSection() string {
 		break
 	}
 	if err := scanner.Err(); err != nil {
-		err := fmt.Errorf(err.Error())
+		err := fmt.Errorf("%s", err)
 		setError(err)
 	}
 
 	return s
+}
+
+func setConfigPath(path string) {
+	if len(path) == 0 {
+		configPath = ""
+		sectionPath = ""
+		return
+	}
+	configPath = path
+	sectionPath = filepath.Join(filepath.Dir(path), sectionFile)
 }

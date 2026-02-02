@@ -20,6 +20,10 @@ const (
 // Flags variable
 var Flags = []cli.Flag{
 	flagName,
+	flagReverse,
+	flagFollowCNAME,
+	flagCnameMax,
+	flagConfig,
 }
 
 // Commands variable
@@ -38,6 +42,27 @@ var usages = map[string]string{
 var flagName = cli.StringFlag{
 	Name:  "name, n",
 	Usage: "Pass a `<section name>` for temporary use",
+}
+
+var flagReverse = cli.BoolFlag{
+	Name:  "reverse, r",
+	Usage: "Reverse lookup for IP arguments (PTR); domain args remain normal",
+}
+
+var flagFollowCNAME = cli.BoolFlag{
+	Name:  "follow-cname, f",
+	Usage: "Follow CNAMEs and query A/AAAA for the target name",
+}
+
+var flagCnameMax = cli.IntFlag{
+	Name:  "cname-max, m",
+	Usage: "Maximum CNAME follow depth (default 5)",
+	Value: defaultCnameMax,
+}
+
+var flagConfig = cli.StringFlag{
+	Name:  "config, c",
+	Usage: "Path to config file (default: ./config.toml or GOPATH path)",
 }
 
 var commandList = cli.Command{
@@ -135,7 +160,7 @@ func doSet(c *cli.Context) error {
 
 	f, err := os.OpenFile(getAppPath(sectionFile), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
 	if err != nil {
-		err := fmt.Errorf(err.Error())
+		err := fmt.Errorf("%s", err)
 		setError(err)
 	}
 	defer f.Close()
