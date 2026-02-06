@@ -23,6 +23,7 @@ brews:
   - repository:
       owner: ryoma123
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     homepage: https://github.com/ryoma123/dic
     description: CLI tool for collecting domain information from multiple DNS servers
     license: MIT
