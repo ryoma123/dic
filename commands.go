@@ -62,7 +62,7 @@ var flagCnameMax = cli.IntFlag{
 
 var flagConfig = cli.StringFlag{
 	Name:  "config, c",
-	Usage: "Path to config file (default: ./config.toml or GOPATH path)",
+	Usage: "Path to config file (default: ~/.config/dic/config.toml)",
 }
 
 var commandList = cli.Command{
@@ -108,7 +108,20 @@ func doEdit(c *cli.Context) error {
 		os.Exit(exitErr)
 	}
 
-	open.Run(getAppPath(configFile))
+	path := configFilePath(configFile)
+	if !exists(path) {
+		if err := ensureConfigDir(); err != nil {
+			setError(fmt.Errorf("failed to create config directory: %s", err))
+		}
+		f, err := os.Create(path)
+		if err != nil {
+			setError(fmt.Errorf("failed to create config file: %s", err))
+		}
+		f.WriteString(defaultConfigContent)
+		f.Close()
+	}
+
+	open.Run(path)
 	return nil
 }
 
@@ -158,7 +171,11 @@ func doSet(c *cli.Context) error {
 
 	s := removeNewline(c.Args().First())
 
-	f, err := os.OpenFile(getAppPath(sectionFile), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
+	if err := ensureConfigDir(); err != nil {
+		setError(fmt.Errorf("failed to create config directory: %s", err))
+	}
+
+	f, err := os.OpenFile(configFilePath(sectionFile), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
 	if err != nil {
 		err := fmt.Errorf("%s", err)
 		setError(err)

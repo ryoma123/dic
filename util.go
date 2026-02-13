@@ -2,7 +2,9 @@ package dic
 
 import (
 	"bytes"
+	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -51,21 +53,41 @@ func removeNewline(s string) string {
 	).Replace(s)
 }
 
-func getAppPath(s string) string {
-	switch s {
-	case configFile:
-		if len(configPath) != 0 {
-			return configPath
-		}
-	case sectionFile:
-		if len(sectionPath) != 0 {
-			return sectionPath
-		}
-	}
+// overrideConfigPath is set by --config flag via setConfigPath.
+var overrideConfigPath string
 
-	if exists(s) {
-		return s
+func configDir() string {
+	if overrideConfigPath != "" {
+		return filepath.Dir(overrideConfigPath)
 	}
+	if v := os.Getenv("DIC_CONFIG_DIR"); v != "" {
+		return v
+	}
+	if v := os.Getenv("XDG_CONFIG_HOME"); v != "" {
+		return filepath.Join(v, "dic")
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		setError(fmt.Errorf("failed to get home directory: %s", err))
+	}
+	return filepath.Join(home, ".config", "dic")
+}
 
-	return os.ExpandEnv(stringsJoin([]string{appPath, s}))
+func configFilePath(name string) string {
+	if overrideConfigPath != "" && name == configFile {
+		return overrideConfigPath
+	}
+	return filepath.Join(configDir(), name)
+}
+
+func ensureConfigDir() error {
+	return os.MkdirAll(configDir(), 0755)
+}
+
+func setConfigPath(path string) {
+	if len(path) == 0 {
+		overrideConfigPath = ""
+		return
+	}
+	overrideConfigPath = path
 }

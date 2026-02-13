@@ -6,11 +6,25 @@ CLI tool for collecting domain information from multiple DNS servers.
 
 ## Installation
 
-To install, use `go get`:
+To install, use `go install`:
 
 ```sh
-$ go get github.com/ryoma123/dic/...
+$ go install github.com/ryoma123/dic/cmd/dic@latest
 ```
+
+Or with Homebrew:
+
+```sh
+$ brew install ryoma123/tap/dic
+```
+
+## Configuration
+
+The config file is located at `~/.config/dic/config.toml`.
+The directory can be overridden with `$DIC_CONFIG_DIR` or `$XDG_CONFIG_HOME/dic/`.
+
+If no config file exists, dic uses a built-in default that queries A records via your system resolver.
+To customize, run `dic edit` to create and open the config file.
 
 ## Usage
 
