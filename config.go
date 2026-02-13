@@ -4,22 +4,25 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 )
 
 const (
-	appPath     = "${GOPATH}/src/github.com/ryoma123/dic/"
 	sectionFile = ".section"
 	configFile  = "config.toml"
 	resolvFile  = "/etc/resolv.conf"
+
+	defaultConfigContent = `[[sec]]
+  name = "default"
+  [[sec.args]]
+    server = ""
+    qtypes = ["a"]
+`
 )
 
 var confSec []args
-var configPath string
-var sectionPath string
 
 // config struct
 type config struct {
@@ -41,10 +44,17 @@ type args struct {
 func newConfig() config {
 	var c config
 
-	_, err := toml.DecodeFile(getAppPath(configFile), &c)
-	if err != nil {
-		err := fmt.Errorf("%s", err)
-		setError(err)
+	path := configFilePath(configFile)
+	if exists(path) {
+		_, err := toml.DecodeFile(path, &c)
+		if err != nil {
+			setError(fmt.Errorf("%s", err))
+		}
+	} else {
+		_, err := toml.Decode(defaultConfigContent, &c)
+		if err != nil {
+			setError(fmt.Errorf("%s", err))
+		}
 	}
 	return c
 }
@@ -98,34 +108,19 @@ func (c config) getSections() []string {
 }
 
 func getDefaultSection() string {
-	var s string
-
-	f, err := os.Open(getAppPath(sectionFile))
+	path := configFilePath(sectionFile)
+	f, err := os.Open(path)
 	if err != nil {
-		err := fmt.Errorf("%s", "Default section is not set. For details see help")
-		setError(err)
+		return "default"
 	}
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		s = scanner.Text()
-		break
+		s := scanner.Text()
+		if len(s) > 0 {
+			return s
+		}
 	}
-	if err := scanner.Err(); err != nil {
-		err := fmt.Errorf("%s", err)
-		setError(err)
-	}
-
-	return s
-}
-
-func setConfigPath(path string) {
-	if len(path) == 0 {
-		configPath = ""
-		sectionPath = ""
-		return
-	}
-	configPath = path
-	sectionPath = filepath.Join(filepath.Dir(path), sectionFile)
+	return "default"
 }
